@@ -1,0 +1,3 @@
+# Ignore auto-created IDE files.
+.idea/
+/out
