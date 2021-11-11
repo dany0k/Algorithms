@@ -1,2 +1,2 @@
-# DM
-🔍Implementing some searches and sorts
+# 🔍Algorithms.
+Implementing some searches and sorts
