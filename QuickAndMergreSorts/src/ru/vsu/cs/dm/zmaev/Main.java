@@ -2,116 +2,116 @@ package ru.vsu.cs.dm.zmaev;
 
 import java.util.Arrays;
 
+import java.util.Arrays;
+
 public class Main {
+    private static int quickSortCounter;
+    private static int mergeSortCounter;
+    private final static String dividerLine = "-------------------------------";
 
-    private static int quickSortCounter = 0;
-    private static int mergeSortCounter = 0;
-
-
-
-    public static int[] mergeSort(int[] array) {
-        int[] arr = Arrays.copyOf(array, array.length);
-
-        int tempLength = arr.length / 2;
-        int tempLength2 = arr.length - tempLength;
-        int i = 0, j = 0;
-        int[] arrFirstPart = new int[tempLength];
-        for (int f = 0; f < tempLength; f++) {
-            arrFirstPart[i] = arr[i];
+    public static double[] quickSort(double[] source){
+        double[] arr = Arrays.copyOf(source, source.length);
+        return quickSort(arr, 0, arr.length - 1);
+    }
+    private static double[] quickSort(double[] arr, int left, int right) {
+        if (left < right) {
+            int partitionIndex = partition(arr, left, right);
+            quickSort(arr, left, partitionIndex - 1);
+            quickSort(arr, partitionIndex + 1, right);
         }
-
-        int[] arrSecondPart = new int[tempLength2];
-        for (int f = tempLength; f < tempLength2; f++) {
-            arrSecondPart[i] = arr[i];
-        }
-
-        for (int k = 0; k < arr.length; k++) {
-            if (i > arrFirstPart.length - 1) {
-                mergeSortCounter++;
-                int a = arrSecondPart[j];
-                arr[k] = a;
-                j++;
-            } else if (j > arrSecondPart.length - 1) {
-                mergeSortCounter++;
-                int a = arrFirstPart[i];
-                arr[k] = a;
-                i++;
-            } else if (arrFirstPart[i] < arrSecondPart[j]) {
-                mergeSortCounter++;
-                int a = arrFirstPart[i];
-                arr[k] = a;
-                i++;
-            } else {
-                mergeSortCounter++;
-                int b = arrSecondPart[j];
-                arr[k] = b;
-                j++;
-            }
-        }
+        quickSortCounter++;
         return arr;
     }
-
-    public static int[] quickSort(int[] arr, int low, int high) {
-        int[] array = Arrays.copyOf(arr, arr.length);
-
-        if (array.length == 0 || low >= high) {
-            return null;
-        }
-
-        int middle = low + (high - low) / 2;
-        int pivot = array[middle];
-
-        int i = low, j = high;
-        while (i <= j) {
-            while (array[i] < pivot) {
-                quickSortCounter++;
-                i++;
+    private static int partition(double[] arr, int left, int right) {
+        int pivot = left;
+        int index = pivot + 1;
+        for (int i = index; i <= right; i++) {
+            if (arr[i] < arr[pivot]) {
+                swap(arr, i, index);
+                index++;
             }
-
-            while (array[j] > pivot) {
-                quickSortCounter++;
-                j--;
-            }
-
-            if (i <= j) {
-                int temp = array[i];
-                array[i] = array[j];
-                array[j] = temp;
-                i++;
-                j--;
-            }
+            quickSortCounter++;
         }
-        if (low < j) {
-            quickSort(array, low, j);
-        }
-
-        if (high > i) {
-            quickSort(array, i, high);
-        }
-
-        return array;
+        swap(arr, pivot, index - 1);
+        return index - 1;
     }
+    private static void swap(double[] arr, int i, int j) {
+        double temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
+    public static double[] mergeSort(double[] source){
+        double[] arr = Arrays.copyOf(source, source.length);
+        if (arr.length < 2) {
+            return arr;
+        }
+        int middle = (int) Math.floor(arr.length / 2);
+        double[] left = Arrays.copyOfRange(arr, 0, middle);
+        double[] right = Arrays.copyOfRange(arr, middle, arr.length);
+
+        return merge(mergeSort(left), mergeSort(right));
+    }
+
+    protected static double[] merge(double[] left, double[] right) {
+        double[] result = new double[left.length + right.length];
+        int i = 0;
+        while (left.length > 0 && right.length > 0) {
+            if (left[0] <= right[0]) {
+                result[i++] = left[0];
+                left = Arrays.copyOfRange(left, 1, left.length);
+            } else {
+                result[i++] = right[0];
+                right = Arrays.copyOfRange(right, 1, right.length);
+            }
+            mergeSortCounter++;
+        }
+
+        for (double num : left) {
+            result[i++] = num;
+        }
+
+        for (double num : right) {
+            result[i++] = num;
+        }
+
+        return result;
+    }
+
 
     public static void main(String[] args) {
-        int[] sortedArr = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
-        int[] unsortedArr = new int[] {10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
+        double[] arr = new double[]{3, 62, 7, 78, -3, 5, 8, -1, 0, 7, 3, 0, 5, -110, 23};
+        double[] worstForQuick = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+        System.out.println(dividerLine);
+        System.out.println();
+        System.out.println("\t\tUnsorted array");
+        testSorts(arr);
+        System.out.println("\t\tSorted array");
+        testSorts(worstForQuick);
+    }
 
-        System.out.println("-----------------Unsorted Array-----------------");
-        System.out.println(Arrays.toString(unsortedArr));
-        System.out.println("-----------------Sorted Array-----------------");
-        System.out.printf("QuickSort: %s\n", Arrays.toString(quickSort(unsortedArr, 0, 10)));
-//        System.out.printf("MergeSort: %s\n", Arrays.toString(mergeSort(unsortedArr)));
-        System.out.println("-----------------Quick sort time-----------------");
-        System.out.printf("Quick sort unsorted time: %s\n", quickSortCounter);
+    public static void testSorts(double[] arr){
+        System.out.println();
+        System.out.println(dividerLine);
+        System.out.println("Array with length = " + arr.length +":");
+        System.out.println(Arrays.toString(arr));
+        System.out.println();
+        System.out.println(dividerLine);
+
+        System.out.println("Result of Quick sort:");
+        double[] quickResult = quickSort(arr);
+        System.out.println(Arrays.toString(quickResult));
+        System.out.println();
+        System.out.println("Comparisons: " + quickSortCounter);
+        System.out.println(dividerLine);
+        System.out.println("Result of Merge sort: ");
+        double[] mergeResult = mergeSort(arr);
+        System.out.println(Arrays.toString(mergeResult));
+        System.out.println();
+        System.out.println("Comparisons: " + mergeSortCounter);
+        System.out.println(dividerLine);
+        System.out.println();
         quickSortCounter = 0;
-        quickSort(sortedArr, 0, 10);
-        System.out.printf("Quick sort sorted time: %s\n", quickSortCounter);
-        mergeSort(unsortedArr);
-        System.out.println("-----------------Merge sort time-----------------");
-        System.out.printf("Merge sort unsorted time: %s\n", mergeSortCounter);
         mergeSortCounter = 0;
-        mergeSort(sortedArr);
-        System.out.printf("Merge sort sorted time: %s\n", mergeSortCounter);
     }
 }
-
