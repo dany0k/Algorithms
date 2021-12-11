@@ -1,12 +1,9 @@
-package ru.vsu.cs.dm.zmaev;
-
-import java.util.Arrays;
-
 import java.util.Arrays;
 
 public class Main {
-    private static int quickSortCounter;
-    private static int mergeSortCounter;
+    private static int quickSortCounter = 0;
+    private static int mergeSortCounter = 0;
+
     private final static String dividerLine = "-------------------------------";
 
     public static double[] quickSort(double[] source){
@@ -15,25 +12,22 @@ public class Main {
     }
     private static double[] quickSort(double[] arr, int left, int right) {
         if (left < right) {
-            int partitionIndex = partition(arr, left, right);
-            quickSort(arr, left, partitionIndex - 1);
-            quickSort(arr, partitionIndex + 1, right);
-        }
-        quickSortCounter++;
-        return arr;
-    }
-    private static int partition(double[] arr, int left, int right) {
-        int pivot = left;
-        int index = pivot + 1;
-        for (int i = index; i <= right; i++) {
-            if (arr[i] < arr[pivot]) {
-                swap(arr, i, index);
-                index++;
+            int pivot = left;
+            int index = pivot + 1;
+            for (int i = index; i <= right; i++) {
+                if (arr[i] < arr[pivot]) {
+                    swap(arr, i, index);
+                    index++;
+                }
+                quickSortCounter++;
             }
-            quickSortCounter++;
+            swap(arr, pivot, index - 1);
+
+            quickSort(arr, left, index - 1);
+            quickSort(arr, index, right);
         }
-        swap(arr, pivot, index - 1);
-        return index - 1;
+
+        return arr;
     }
     private static void swap(double[] arr, int i, int j) {
         double temp = arr[i];
@@ -57,6 +51,7 @@ public class Main {
         double[] result = new double[left.length + right.length];
         int i = 0;
         while (left.length > 0 && right.length > 0) {
+            mergeSortCounter++;
             if (left[0] <= right[0]) {
                 result[i++] = left[0];
                 left = Arrays.copyOfRange(left, 1, left.length);
@@ -78,19 +73,30 @@ public class Main {
         return result;
     }
 
-
-    public static void main(String[] args) {
-        double[] arr = new double[]{3, 62, 7, 78, -3, 5, 8, -1, 0, 7, 3, 0, 5, -110, 23};
-        double[] worstForQuick = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-        System.out.println(dividerLine);
-        System.out.println();
-        System.out.println("\t\tUnsorted array");
-        testSorts(arr);
-        System.out.println("\t\tSorted array");
-        testSorts(worstForQuick);
+    public static double[] fillArrayRnd(int size) {
+        double[] arr = new double[size];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = (int) Math.round((Math.random() * 30) - 15);
+        }
+        return arr;
     }
 
-    public static void testSorts(double[] arr){
+    public static void main(String[] args) {
+        double[] arrRnd = fillArrayRnd(16);
+        double[] worstForQuick = new double[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+        double[] backSorted = new double[] {16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+        System.out.println(dividerLine);
+        System.out.println();
+        System.out.println("\tRandom-filled array");
+        showResult(arrRnd);
+        System.out.println("\t\tSorted array");
+        showResult(worstForQuick);
+        System.out.println("\t\tBack-sorted array");
+        showResult(backSorted);
+    }
+
+    public static void showResult(double[] array){
+        double[] arr = Arrays.copyOf(array, array.length);
         System.out.println();
         System.out.println(dividerLine);
         System.out.println("Array with length = " + arr.length +":");
